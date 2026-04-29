@@ -1,22 +1,17 @@
 # OMNI-ULTRA V2026 🚀
 
-Welcome to the official repository for **OMNI-ULTRA**, a standalone AI Agent built to run entirely via GitHub Actions.
+**OMNI-ULTRA** is a standalone AI Agent built to run entirely via GitHub Actions. Optimized for mobile development on Vivo devices.
 
 ## 🛠 Features
-- **Brain:** Powered by Google Gemini 1.5 Flash.
-- **Automation:** Responds to GitHub Issues automatically.
-- **Mobile-First:** Developed and deployed entirely on mobile (Termux & Vivo).
+- **AI Brain:** Powered by **Gemini 2.5 Flash**.
+- **Automation:** Uses the modern `google-genai` SDK for 2026.
+- **Trigger:** Responds to GitHub Issues automatically.
 
 ## 🚀 How to Use
-1. Open a **New Issue** in this repository.
-2. Type your prompt or coding question.
-3. Wait for the **OMNI-ULTRA-AGENT** to reply with the solution.
-
-## 📁 Project Structure
-- `.github/workflows/agent.yml`: The automation engine.
-- `bot.py`: The Python logic connecting GitHub to Gemini.
-- `README.md`: Project documentation.
+1. Open a **New Issue**.
+2. Ask a question or give a command.
+3. The **OMNI-ULTRA-AGENT** will reply and close the issue.
 
 ---
-**Status:** Operational ✅  
-**Developer:** [Your GitHub Name]
+**Status:** 🟢 Online (v2.5)  
+**Dev:** Harinathzzzz1234
