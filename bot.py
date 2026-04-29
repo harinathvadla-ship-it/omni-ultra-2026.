@@ -1,11 +1,14 @@
 import os
 import github
-import google.generativeai as genai
+from google import genai
 
 try:
-    # Setup
-    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-    gh = github.Github(os.getenv("GITHUB_TOKEN"))
+    # Setup SDK
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    
+    # Setup GitHub Auth
+    auth = github.Auth.Token(os.getenv("GITHUB_TOKEN"))
+    gh = github.Github(auth=auth)
     repo = gh.get_repo(os.getenv("GITHUB_REPOSITORY"))
 
     # Get the latest issue
@@ -14,18 +17,19 @@ try:
         issue = issues[0]
         user_input = issue.body or "Hello"
 
-        # Talk to Gemini
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(user_input)
+        # Using Gemini 2.5 Flash
+        response = client.models.generate_content(
+            model="gemini-2.5-flash", 
+            contents=user_input
+        )
 
         # Reply and Close
-        issue.create_comment(f"### OMNI-ULTRA Response\n\n{response.text}")
+        issue.create_comment(f"### OMNI-ULTRA (Gemini 2.5) Response\n\n{response.text}")
         issue.edit(state='closed')
-        print("Success: Comment posted.")
+        print("Success: 2.5 Agent responded.")
     else:
-        print("No open issues found.")
+        print("No open issues.")
 
 except Exception as e:
     print(f"Error occurred: {e}")
     exit(1)
-
