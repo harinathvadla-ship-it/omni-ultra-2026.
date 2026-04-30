@@ -2,33 +2,32 @@ name: Build Android APK
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # This forces the build to use the modern Node 24 runner
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5 # Upgraded to v5
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 21 # Upgraded to Java 21 for 2026 compatibility
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
 
-      - name: Build with Gradle
-        # This one line creates the wrapper AND builds the app together
+      # This step creates the missing runner files for you automatically
+      - name: Setup Android Environment
         run: |
           gradle wrapper
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+
+      - name: Build APK
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OMNI-ULTRA-Final
-          path: app/build/outputs/apk/debug/*.apk
-          
+          name: OMNI-ULTRA-Package
+          path: "**/*.apk"
