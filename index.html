@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNI-ULTRA V2026 | AI App Builder</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        input, textarea, button { width: 100%; margin-bottom: 15px; padding: 12px; border-radius: 8px; border: none; }
+        input, textarea { background: #1e1e1e; color: #00ffcc; border: 1px solid #333; }
+        button { background: #6200ee; color: white; font-weight: bold; cursor: pointer; }
+        button:active { background: #3700b3; }
+        #output { background: #000; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; font-size: 12px; display: none; }
+        .status { color: #bb86fc; font-size: 14px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 OMNI-ULTRA Builder</h2>
+    <p class="status">Target Device: Vivo (Mobile-Web)</p>
+    
+    <input type="password" id="apiKey" placeholder="Paste your Gemini API Key here">
+    <textarea id="prompt" rows="5" placeholder="What app should I build? (e.g. A calculator app with neon lights)"></textarea>
+    
+    <button onclick="generateApp()">GENERATE & DEPLOY</button>
+    
+    <div id="statusUpdate"></div>
+    <div id="output"></div>
+    <button id="downloadBtn" style="display:none; background: #03dac6; color: black;" onclick="downloadFile()">DOWNLOAD APP FILE</button>
+</div>
+
+<script>
+    let generatedCode = "";
+
+    async function generateApp() {
+        const key = document.getElementById('apiKey').value;
+        const prompt = document.getElementById('prompt').value;
+        const status = document.getElementById('statusUpdate');
+        const output = document.getElementById('output');
+
+        if (!key || !prompt) {
+            alert("Please provide both API Key and Prompt");
+            return;
+        }
+
+        status.innerText = "🤖 OMNI is thinking...";
+        
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `Create a single-file HTML5 mobile app for the following idea. Include CSS and JS inside the file. Idea: ${prompt}` }] }]
+                })
+            });
+
+            const data = await response.json();
+            generatedCode = data.candidates[0].content.parts[0].text;
+            
+            // Clean up Markdown formatting if AI includes it
+            generatedCode = generatedCode.replace(/```html|```/g, "").trim();
+
+            status.innerText = "✅ Build Successful!";
+            output.innerText = generatedCode;
+            output.style.display = "block";
+            document.getElementById('downloadBtn').style.display = "block";
+        } catch (error) {
+            status.innerText = "❌ Error: " + error.message;
+        }
+    }
+
+    function downloadFile() {
+        const blob = new Blob([generatedCode], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'my-ai-app.html';
+        a.click();
+    }
+</script>
+
+</body>
+</html>
