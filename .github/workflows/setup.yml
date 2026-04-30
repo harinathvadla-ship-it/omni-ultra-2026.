@@ -1,0 +1,21 @@
+name: Generate Build Files
+on: workflow_dispatch # You run this manually once
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Generate Wrapper
+        run: |
+          gradle wrapper
+          git config --global user.name "Harinath"
+          git config --global user.email "harinath@example.com"
+          git add .
+          git commit -m "Added build wrapper from Vivo"
+          git push
