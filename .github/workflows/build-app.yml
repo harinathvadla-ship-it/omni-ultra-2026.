@@ -6,28 +6,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # This forces the build to use the modern Node 24 runner
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5 # Upgraded to v5
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21 # Upgraded to Java 21 for 2026 compatibility
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
-      # THIS IS THE FIX: It creates the missing runner files automatically
-      - name: Force Gradle Wrapper
-        run: gradle wrapper
-
-      - name: Grant Execute Permission
-        run: chmod +x gradlew
-
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Build with Gradle
+        # This one line creates the wrapper AND builds the app together
+        run: |
+          gradle wrapper
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OMNI-ULTRA-App
+          name: OMNI-ULTRA-Final
           path: app/build/outputs/apk/debug/*.apk
+          
